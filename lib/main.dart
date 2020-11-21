@@ -42,21 +42,26 @@ class _SplashScreenState extends State<SplashScreen> {
     double width=MediaQuery.of(context).size.width;
     double height=MediaQuery.of(context).size.height;
 
-    return new Scaffold(
-      body: new Center(
-        child: Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [Constants.DEFAULT_BLUE, Constants.DEFAULT_ORANGE])),
-
-          child: new Image.asset('images/logo_main.png', width: 10.00, height: 10.00),
-        )
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          decoration: new BoxDecoration(
+              gradient: new LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Constants.DEFAULT_BLUE, Constants.DEFAULT_ORANGE
+                ],
+              )),
+          child: Align(
+              alignment: Alignment.center,
+              child: Image.asset(
+                "images/logo_main.png",
+                width: 200,
+                height: 200,
+              )),
+        ),
       ),
-
     );
   }
 }
