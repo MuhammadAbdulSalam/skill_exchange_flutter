@@ -2,6 +2,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:service_exchange_multi/utils/Constants.dart';
 
 class LoginActivity extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _LoginState extends State<LoginActivity>{
             gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.red])),
+            colors: [Constants.DEFAULT_BLUE, Constants.DEFAULT_ORANGE])),
 
             child: ListView(
               children: <Widget>[
@@ -64,7 +65,7 @@ class _LoginState extends State<LoginActivity>{
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: RaisedButton(
                       textColor: Colors.white,
-                      color: Colors.blue,
+                      color: Constants.DEFAULT_BLUE,
                       child: Text('Login'),
                       onPressed: () {
                     //TODO

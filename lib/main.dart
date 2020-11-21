@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:service_exchange_multi/utils/Constants.dart';
 
 import 'loginviews/LoginActivity.dart';
 
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
               gradient: LinearGradient(
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
-                  colors: [Colors.blue, Colors.red])),
+                  colors: [Constants.DEFAULT_BLUE, Constants.DEFAULT_ORANGE])),
 
           child: new Image.asset('images/logo_main.png', width: 10.00, height: 10.00),
         )
