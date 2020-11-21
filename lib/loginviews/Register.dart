@@ -1,22 +1,56 @@
-
-
-
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:service_exchange_multi/loginviews/LoginActivity.dart';
+import 'package:service_exchange_multi/location/AddressAutoComplete.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 
+class Register extends StatefulWidget {
+  @override
+  __RegisterStateState createState() => __RegisterStateState();
+}
 
-class Register extends StatelessWidget {
+class __RegisterStateState extends State<Register> {
+  final _auth = FirebaseAuth.instance;
+  FocusNode _focus = new FocusNode();
+  var mContext;
+  static var openPage = 0;
 
-  final _auth =   FirebaseAuth.instance;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _focus.addListener(_onFocusChange);
+  }
 
+  void _onFocusChange() {
+    FocusScope.of(context).unfocus();
 
+    openPage = openPage + 1;
+
+    if(openPage == 1){
+      Navigator.push(
+        mContext,
+        MaterialPageRoute(builder: (context) => AddressAutoComplete()),
+      );
+    }
+    if(openPage > 1)
+      {
+        openPage = 0;
+      }
+
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    _focus.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    mContext = context;
+
     return Scaffold(
         body: Center(
             child: Container(
@@ -25,9 +59,9 @@ class Register extends StatelessWidget {
                         begin: Alignment.topRight,
                         end: Alignment.bottomLeft,
                         colors: [
-                          Constants.DEFAULT_BLUE,
-                          Constants.DEFAULT_ORANGE
-                        ])),
+                      Constants.DEFAULT_BLUE,
+                      Constants.DEFAULT_ORANGE
+                    ])),
                 child: ListView(
                   children: <Widget>[
                     Container(
@@ -55,10 +89,10 @@ class Register extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(10),
                       child: TextField(
-                        // controller: nameController,
+                        focusNode: _focus,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Address',
+                          labelText: 'Current Address',
                           labelStyle: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -86,7 +120,6 @@ class Register extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Container(
                       padding: EdgeInsets.all(10),
                       child: TextField(
@@ -111,7 +144,6 @@ class Register extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Container(
                         height: 50,
                         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -125,14 +157,11 @@ class Register extends StatelessWidget {
                             // });
                             try {
                               final newuser =
-                              await _auth.createUserWithEmailAndPassword(
-                                  email: "s@s.com", password: "00000000");
+                                  await _auth.createUserWithEmailAndPassword(
+                                      email: "abc@abc.com",
+                                      password: "00000000");
                               if (newuser != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginActivity()),
-                                );
+                                Navigator.pop(context);
                                 // setState(() {
                                 //   showProgress = false;
                                 // });
@@ -142,21 +171,18 @@ class Register extends StatelessWidget {
                         )),
                     Container(
                         child: Row(
-                          children: <Widget>[
-                            Text('Already have an account?'),
-                            FlatButton(
-                              textColor: Colors.white,
-                              child: Text(
-                                'Login Instead',
-                              ),
-                              padding: EdgeInsets.all(30),
-                              onPressed: () => Navigator.pop(context)
-
-                            )
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.center,
-                        ))
-
+                      children: <Widget>[
+                        Text('Already have an account?'),
+                        FlatButton(
+                            textColor: Colors.white,
+                            child: Text(
+                              'Login Instead',
+                            ),
+                            padding: EdgeInsets.all(30),
+                            onPressed: () => Navigator.pop(context))
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ))
                   ],
                 ))));
   }
