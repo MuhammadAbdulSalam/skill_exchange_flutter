@@ -2,6 +2,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 
 class LoginActivity extends StatefulWidget {
@@ -10,6 +11,12 @@ class LoginActivity extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginActivity>{
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +33,8 @@ class _LoginState extends State<LoginActivity>{
               children: <Widget>[
                 Container(
                     alignment: Alignment.center,
-                    padding: EdgeInsets.all(30),
-                  child: new Image.asset('images/logo_main.png', width: 200.00, height: 200.00),
+                    padding: EdgeInsets.all(50),
+                  child: new Image.asset('images/logo_main.png', width: 150.00, height: 150.00),
                     ),
                 Container(
                   padding: EdgeInsets.all(10),

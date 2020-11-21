@@ -11,9 +11,6 @@ import 'package:flutter/animation.dart';
 
 
 void main() {
-
-  SystemChrome.setEnabledSystemUIOverlays([]);
-
   runApp(new MaterialApp(
 
       home: new SplashScreen(),
@@ -108,6 +105,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
