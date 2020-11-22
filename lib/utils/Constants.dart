@@ -12,7 +12,8 @@ class Constants{
   static const ORANGE_SHADE_1 = Color(0xE65E49);
   static const ORANGE_SHADE_2 = Color(0xF2634E);
 
-
+  // ignore: non_constant_identifier_names
+  static var registration_Address = "";
 
   static const DEFAULT_BUTTON =  Color(0xFF6dc1c3);
 
