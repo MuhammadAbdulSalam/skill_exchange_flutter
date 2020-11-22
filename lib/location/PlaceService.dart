@@ -7,6 +7,7 @@ class Place {
   String streetNumber;
   String street;
   String city;
+  String postalTown;
   String zipCode;
 
   Place({
@@ -14,6 +15,8 @@ class Place {
     this.street,
     this.city,
     this.zipCode,
+    this.postalTown,
+
   });
 
   @override
@@ -45,13 +48,15 @@ class PlaceApiProvider {
   static final String iosKey = "AIzaSyANJXhDPNxefcF2P0JXXcz0PxG7ikPBgBA";
   final apiKey = Platform.isAndroid ? androidKey : iosKey;
 
-  Future<List<Suggestion>> fetchSuggestions(String input, String lang, String country) async {
+  Future<List<Suggestion>> fetchSuggestions(
+      String input, String lang, String country) async {
     String type = '(regions)';
-    String baseURL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-    String request = '$baseURL?input=$input&key=$androidKey&sessiontoken=$sessionToken';
+    String baseURL =
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+    String request =
+        '$baseURL?input=$input&key=$androidKey&sessiontoken=$sessionToken';
 
-
-       final response = await client.get(request);
+    final response = await client.get(request);
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
@@ -77,9 +82,11 @@ class PlaceApiProvider {
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
+      print("::::::::::::::::::::::::::::::::::::::::::" + response.body.toString());
+
       if (result['status'] == 'OK') {
         final components =
-        result['result']['address_components'] as List<dynamic>;
+            result['result']['address_components'] as List<dynamic>;
         // build result
         final place = Place();
         components.forEach((c) {
@@ -89,6 +96,9 @@ class PlaceApiProvider {
           }
           if (type.contains('route')) {
             place.street = c['long_name'];
+          }
+          if (type.contains('postal_town')) {
+            place.city = c['long_name'];
           }
           if (type.contains('locality')) {
             place.city = c['long_name'];

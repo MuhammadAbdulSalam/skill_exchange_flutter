@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'PlaceService.dart';
@@ -46,24 +45,24 @@ class AddressSearch extends SearchDelegate<Suggestion> {
       future: query == ""
           ? null
           : apiClient.fetchSuggestions(
-          query, Localizations.localeOf(context).languageCode, "UK"),
+              query, Localizations.localeOf(context).languageCode, "UK"),
       builder: (context, snapshot) => query == ''
           ? Container(
-        padding: EdgeInsets.all(16.0),
-        child: Text('Enter your address'),
-      )
+              padding: EdgeInsets.all(16.0),
+              child: Text('Enter your address'),
+            )
           : snapshot.hasData
-          ? ListView.builder(
-        itemBuilder: (context, index) => ListTile(
-          title:
-          Text((snapshot.data[index] as Suggestion).description),
-          onTap: () {
-            close(context, snapshot.data[index] as Suggestion);
-          },
-        ),
-        itemCount: snapshot.data.length,
-      )
-          : Container(child: Text('Loading...')),
+              ? ListView.builder(
+                  itemBuilder: (context, index) => ListTile(
+                    title:
+                        Text((snapshot.data[index] as Suggestion).description),
+                    onTap: () {
+                      close(context, snapshot.data[index] as Suggestion);
+                    },
+                  ),
+                  itemCount: snapshot.data.length,
+                )
+              : Container(child: Text('Loading...')),
     );
   }
 }
