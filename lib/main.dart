@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
@@ -10,10 +11,14 @@ import 'package:flutter/animation.dart';
 
 
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(new MaterialApp(
 
       home: new SplashScreen(),
+
     routes: <String, WidgetBuilder>{
       '/LoginActivity': (BuildContext context) => new LoginActivity()
     },

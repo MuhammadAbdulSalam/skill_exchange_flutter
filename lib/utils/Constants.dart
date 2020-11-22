@@ -12,6 +12,14 @@ class Constants{
   static const ORANGE_SHADE_1 = Color(0xE65E49);
   static const ORANGE_SHADE_2 = Color(0xF2634E);
 
+
+  static const USER_NAME = "user_name";
+  static const USER_JOB = "user_job";
+  static const USER_PHONE = "user_phone";
+  static const USER_ADDRESS = "user_address";
+  static const USER_DP = "user_dp";
+
+
   // ignore: non_constant_identifier_names
   static var registration_Address = "";
 
