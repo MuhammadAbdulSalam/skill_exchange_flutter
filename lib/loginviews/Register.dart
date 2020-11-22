@@ -1,9 +1,13 @@
+import 'dart:collection';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:service_exchange_multi/location/AddressAutoComplete.dart';
 import 'package:service_exchange_multi/loginviews/LoginActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/Dialoge.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Register extends StatefulWidget {
   String name, email, password, phoneNumber, jobTitle;
@@ -25,7 +29,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterStateState extends State<Register> {
-
   final nameController = TextEditingController();
   final addressController = TextEditingController();
   final phoneController = TextEditingController();
@@ -35,11 +38,11 @@ class _RegisterStateState extends State<Register> {
   final jobTitleController = TextEditingController();
 
   final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  final _formKey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
   var mContext;
   FocusNode _focus = new FocusNode();
   static var openPage = 0;
-
 
   @override
   void initState() {
@@ -57,14 +60,13 @@ class _RegisterStateState extends State<Register> {
       Navigator.push(
         mContext,
         MaterialPageRoute(
-            builder: (context) =>
-                AddressAutoComplete(
-                    nameController.text,
-                    jobTitleController.text,
-                    widget.address,
-                    emailController.text,
-                    passwordController.text,
-                    phoneController.text)),
+            builder: (context) => AddressAutoComplete(
+                nameController.text,
+                jobTitleController.text,
+                widget.address,
+                emailController.text,
+                passwordController.text,
+                phoneController.text)),
       );
     }
     if (openPage > 1) {
@@ -97,11 +99,14 @@ class _RegisterStateState extends State<Register> {
       addressController.text = address;
     }
 
+    /// Show alert dialog
     showAlertDialog(BuildContext context) {
       // set up the button
       Widget okButton = FlatButton(
         child: Text("Retry"),
-        onPressed: () { Navigator.of(context).pop(true);},
+        onPressed: () {
+          Navigator.of(context).pop(true);
+        },
       ); // set up the button
 
       // set up the AlertDialog
@@ -123,33 +128,46 @@ class _RegisterStateState extends State<Register> {
     }
 
 
+    /// Handle user Registration
     Future<void> _handleSubmit(BuildContext context) async {
       try {
         Dialoge.showLoadingDialog(context, _keyLoader); //invoking login
+
         try {
-          String emailToRegister =
-          emailController.text.toString();
-          String passwordToRegister =
-          passwordController.text.toString();
-          final newuser =
-          await _auth.createUserWithEmailAndPassword(
-              email: emailToRegister,
-              password: passwordToRegister);
+          String emailToRegister = emailController.text.toString();
+          String passwordToRegister = passwordController.text.toString();
+          final newuser = await _auth.createUserWithEmailAndPassword(
+              email: emailToRegister, password: passwordToRegister);
 
           if (newuser != null) {
-            Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                .pop(); //close the dialoge
+            final User user = FirebaseAuth.instance.currentUser;
+            final uid = user.uid;
+            final DBRef = FirebaseDatabase.instance.reference().child('Users');
 
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        LoginActivity()));
-            // setState(() {
-            //   showProgress = false;
-            // });
-          }
-          else {
+            final Map<String, String> usersHashMap = {
+              'name': nameController.text,
+              'jobTitle': jobTitleController.text,
+              'phoneNumber': phoneController.text,
+              'address': addressController.text,
+              'posts': "none",
+              'dpUrl': "default"
+            };
+
+            final prefs = await SharedPreferences.getInstance();
+
+            await DBRef.child(uid).set(usersHashMap).then((result) {
+              prefs.setString(Constants.USER_NAME, nameController.text.toString());
+              prefs.setString(Constants.USER_JOB, jobTitleController.text,);
+              prefs.setString(Constants.USER_PHONE, phoneController.text);
+              prefs.setString(Constants.USER_ADDRESS, addressController.text);
+              prefs.setString(Constants.USER_DP, "default");
+
+              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                  .pop();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginActivity()));
+            });
+          } else {
             Navigator.of(_keyLoader.currentContext, rootNavigator: true)
                 .pop(); //close the dialoge
             showAlertDialog(context);
@@ -160,41 +178,34 @@ class _RegisterStateState extends State<Register> {
           showAlertDialog(context);
         }
       } catch (error) {
-        print(error);
+        showAlertDialog(context);
       }
     }
 
-    final _formKey = GlobalKey<FormState>();
-
-    String validationText(String text, bool isEmail, bool isPassword, bool isConfirmPassword){
-
-      if(text.isEmpty ){
+    String validationText(
+        String text, bool isEmail, bool isPassword, bool isConfirmPassword) {
+      if (text.isEmpty) {
         return "* Cannot be left blank";
       }
 
-      if(isConfirmPassword)
-        {
-          if (text != passwordController.text)
-            {
-              return "Confirmation Password not correct";
-            }
+      if (isConfirmPassword) {
+        if (text != passwordController.text) {
+          return "Confirmation Password not correct";
         }
+      }
 
-      if(isEmail && !text.contains("@") && !text.contains("."))
-      {
+      if (isEmail && !text.contains("@") && !text.contains(".")) {
         return "wrong format, should be like example@abc.com";
       }
 
-      if(isPassword)
-        {
-          String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-          RegExp regExp = new RegExp(pattern);
-          if(!regExp.hasMatch(text)){
-            return "Password must contain \n One Uppercase \n One Number \n One Special Character";
-
-          }
+      if (isPassword) {
+        String pattern =
+            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+        RegExp regExp = new RegExp(pattern);
+        if (!regExp.hasMatch(text)) {
+          return "Password must contain \n One Uppercase \n One Number \n One Special Character";
         }
-
+      }
 
       return null;
     }
@@ -210,16 +221,18 @@ class _RegisterStateState extends State<Register> {
                           begin: Alignment.topRight,
                           end: Alignment.bottomLeft,
                           colors: [
-                            Constants.DEFAULT_BLUE,
-                            Constants.DEFAULT_ORANGE
-                          ])),
+                        Constants.DEFAULT_BLUE,
+                        Constants.DEFAULT_ORANGE
+                      ])),
                   child: ListView(
                     padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.all(10),
                         child: TextFormField(
-                          validator: (value) {return validationText(value, false, false, false);},
+                          validator: (value) {
+                            return validationText(value, false, false, false);
+                          },
                           controller: nameController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -232,7 +245,9 @@ class _RegisterStateState extends State<Register> {
                         padding: EdgeInsets.all(10),
                         child: TextFormField(
                           controller: jobTitleController,
-                          validator: (value) {return validationText(value, false, false, false);},
+                          validator: (value) {
+                            return validationText(value, false, false, false);
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Job Title',
@@ -245,7 +260,9 @@ class _RegisterStateState extends State<Register> {
                         child: TextFormField(
                           controller: addressController,
                           focusNode: _focus,
-                          validator: (value) {return validationText(value, false, false, false);},
+                          validator: (value) {
+                            return validationText(value, false, false, false);
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Current Address',
@@ -257,7 +274,9 @@ class _RegisterStateState extends State<Register> {
                         padding: EdgeInsets.all(10),
                         child: TextFormField(
                           controller: emailController,
-                          validator: (value) {return validationText(value, true, false, false);},
+                          validator: (value) {
+                            return validationText(value, true, false, false);
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Email',
@@ -269,7 +288,9 @@ class _RegisterStateState extends State<Register> {
                         padding: EdgeInsets.all(10),
                         child: TextFormField(
                           controller: phoneController,
-                          validator: (value) {return validationText(value, false, false, false);},
+                          validator: (value) {
+                            return validationText(value, false, false, false);
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Phone Number',
@@ -281,7 +302,9 @@ class _RegisterStateState extends State<Register> {
                         padding: EdgeInsets.all(10),
                         child: TextFormField(
                           obscureText: true,
-                          validator: (value) {return validationText(value, false, true, false);},
+                          validator: (value) {
+                            return validationText(value, false, true, false);
+                          },
                           controller: passwordController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -294,7 +317,9 @@ class _RegisterStateState extends State<Register> {
                         padding: EdgeInsets.all(10),
                         child: TextFormField(
                           obscureText: true,
-                          validator: (value) {return validationText(value, false, false, true);},
+                          validator: (value) {
+                            return validationText(value, false, false, true);
+                          },
                           controller: confirmPasswordController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -321,18 +346,18 @@ class _RegisterStateState extends State<Register> {
                           )),
                       Container(
                           child: Row(
-                            children: <Widget>[
-                              Text('Already have an account?'),
-                              FlatButton(
-                                  textColor: Colors.white,
-                                  child: Text(
-                                    'Login Instead',
-                                  ),
-                                  padding: EdgeInsets.all(30),
-                                  onPressed: () => Navigator.pop(context))
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.center,
-                          ))
+                        children: <Widget>[
+                          Text('Already have an account?'),
+                          FlatButton(
+                              textColor: Colors.white,
+                              child: Text(
+                                'Login Instead',
+                              ),
+                              padding: EdgeInsets.all(30),
+                              onPressed: () => Navigator.pop(context))
+                        ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      ))
                     ],
                   )))),
     );
