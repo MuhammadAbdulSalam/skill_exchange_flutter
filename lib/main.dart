@@ -11,14 +11,11 @@ import 'package:flutter/animation.dart';
 
 
 void main() {
-
-  SystemChrome.setEnabledSystemUIOverlays([]);
-
   runApp(new MaterialApp(
 
       home: new SplashScreen(),
     routes: <String, WidgetBuilder>{
-      '/HomeScreen': (BuildContext context) => new LoginActivity()
+      '/LoginActivity': (BuildContext context) => new LoginActivity()
     },
   ));
 }
@@ -38,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   }
 
   void navigationPage() {
-    Navigator.of(context).pushReplacementNamed('/HomeScreen');
+    Navigator.of(context).pushReplacementNamed('/LoginActivity');
   }
 
 
@@ -57,15 +54,15 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     TweenSequenceItem(
       weight: 0.5,
       tween: ColorTween(
-        begin: Colors.blue[800],
-        end: Colors.pink[800],
+        begin: Constants.DEFAULT_BLUE,
+        end: Constants.DEFAULT_ORANGE,
       ),
     ),
     TweenSequenceItem(
       weight: 0.5,
       tween: ColorTween(
-        begin: Colors.pink[800],
-        end: Colors.blue[800],
+        begin: Constants.DEFAULT_ORANGE,
+        end: Constants.DEFAULT_BLUE,
       ),
     ),
   ]);
@@ -73,15 +70,15 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     TweenSequenceItem(
       weight: 0.5,
       tween: ColorTween(
-        begin: Colors.blue[500],
-        end: Colors.pink[500],
+        begin: Constants.DEFAULT_BLUE,
+        end: Constants.DEFAULT_ORANGE,
       ),
     ),
     TweenSequenceItem(
       weight: 0.5,
       tween: ColorTween(
-        begin: Colors.pink[500],
-        end: Colors.blue[500],
+        begin: Constants.DEFAULT_ORANGE,
+        end: Constants.DEFAULT_BLUE,
       ),
     ),
   ]);
@@ -89,15 +86,15 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     TweenSequenceItem(
       weight: 0.5,
       tween: ColorTween(
-        begin: Colors.blue[200],
-        end: Colors.pink[200],
+        begin: Constants.BLUE_SHADE_2,
+        end: Constants.ORANGE_SHADE_2,
       ),
     ),
     TweenSequenceItem(
       weight: 0.5,
       tween: ColorTween(
-        begin: Colors.pink[200],
-        end: Colors.blue[200],
+        begin: Constants.ORANGE_SHADE_2,
+        end: Constants.BLUE_SHADE_2,
       ),
     ),
   ]);
@@ -108,6 +105,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([]);
+
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
