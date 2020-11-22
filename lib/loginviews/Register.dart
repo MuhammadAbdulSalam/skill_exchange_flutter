@@ -25,6 +25,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterStateState extends State<Register> {
+
   final nameController = TextEditingController();
   final addressController = TextEditingController();
   final phoneController = TextEditingController();
@@ -33,11 +34,12 @@ class _RegisterStateState extends State<Register> {
   final confirmPasswordController = TextEditingController();
   final jobTitleController = TextEditingController();
 
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   final _auth = FirebaseAuth.instance;
   var mContext;
-
   FocusNode _focus = new FocusNode();
   static var openPage = 0;
+
 
   @override
   void initState() {
@@ -55,13 +57,14 @@ class _RegisterStateState extends State<Register> {
       Navigator.push(
         mContext,
         MaterialPageRoute(
-            builder: (context) => AddressAutoComplete(
-                nameController.text,
-                jobTitleController.text,
-                widget.address,
-                emailController.text,
-                passwordController.text,
-                phoneController.text)),
+            builder: (context) =>
+                AddressAutoComplete(
+                    nameController.text,
+                    jobTitleController.text,
+                    widget.address,
+                    emailController.text,
+                    passwordController.text,
+                    phoneController.text)),
       );
     }
     if (openPage > 1) {
@@ -94,12 +97,35 @@ class _RegisterStateState extends State<Register> {
       addressController.text = address;
     }
 
-    final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+    showAlertDialog(BuildContext context) {
+      // set up the button
+      Widget okButton = FlatButton(
+        child: Text("Retry"),
+        onPressed: () { Navigator.of(context).pop(true);},
+      ); // set up the button
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: Text("Error Occurred"),
+        content: Text("An Error has Occurred, would you like to try again?  "),
+        actions: [
+          okButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
 
 
     Future<void> _handleSubmit(BuildContext context) async {
       try {
-        Dialoge.showLoadingDialog(context, _keyLoader);//invoking login
+        Dialoge.showLoadingDialog(context, _keyLoader); //invoking login
         try {
           String emailToRegister =
           emailController.text.toString();
@@ -111,8 +137,9 @@ class _RegisterStateState extends State<Register> {
               password: passwordToRegister);
 
           if (newuser != null) {
-            Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();//close the dialoge
-            print("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+            Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                .pop(); //close the dialoge
+
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -122,33 +149,77 @@ class _RegisterStateState extends State<Register> {
             //   showProgress = false;
             // });
           }
-        } catch (e) {}
-
+          else {
+            Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+                .pop(); //close the dialoge
+            showAlertDialog(context);
+          }
+        } catch (e) {
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true)
+              .pop(); //close the dialoge
+          showAlertDialog(context);
+        }
       } catch (error) {
         print(error);
       }
     }
 
+    final _formKey = GlobalKey<FormState>();
 
+    String validationText(String text, bool isEmail, bool isPassword, bool isConfirmPassword){
+
+      if(text.isEmpty ){
+        return "* Cannot be left blank";
+      }
+
+      if(isConfirmPassword)
+        {
+          if (text != passwordController.text)
+            {
+              return "Confirmation Password not correct";
+            }
+        }
+
+      if(isEmail && !text.contains("@") && !text.contains("."))
+      {
+        return "wrong format, should be like example@abc.com";
+      }
+
+      if(isPassword)
+        {
+          String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+          RegExp regExp = new RegExp(pattern);
+          if(!regExp.hasMatch(text)){
+            return "Password must contain \n One Uppercase \n One Number \n One Special Character";
+
+          }
+        }
+
+
+      return null;
+    }
 
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: Scaffold(
-          body: Center(
+          body: Form(
+              key: _formKey,
               child: Container(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
                           begin: Alignment.topRight,
                           end: Alignment.bottomLeft,
                           colors: [
-                        Constants.DEFAULT_BLUE,
-                        Constants.DEFAULT_ORANGE
-                      ])),
+                            Constants.DEFAULT_BLUE,
+                            Constants.DEFAULT_ORANGE
+                          ])),
                   child: ListView(
+                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
+                          validator: (value) {return validationText(value, false, false, false);},
                           controller: nameController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -159,8 +230,9 @@ class _RegisterStateState extends State<Register> {
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
                           controller: jobTitleController,
+                          validator: (value) {return validationText(value, false, false, false);},
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Job Title',
@@ -170,9 +242,10 @@ class _RegisterStateState extends State<Register> {
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
                           controller: addressController,
                           focusNode: _focus,
+                          validator: (value) {return validationText(value, false, false, false);},
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Current Address',
@@ -182,8 +255,9 @@ class _RegisterStateState extends State<Register> {
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
                           controller: emailController,
+                          validator: (value) {return validationText(value, true, false, false);},
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Email',
@@ -193,8 +267,9 @@ class _RegisterStateState extends State<Register> {
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
                           controller: phoneController,
+                          validator: (value) {return validationText(value, false, false, false);},
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Phone Number',
@@ -204,8 +279,9 @@ class _RegisterStateState extends State<Register> {
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
                           obscureText: true,
+                          validator: (value) {return validationText(value, false, true, false);},
                           controller: passwordController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -216,8 +292,9 @@ class _RegisterStateState extends State<Register> {
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
+                        child: TextFormField(
                           obscureText: true,
+                          validator: (value) {return validationText(value, false, false, true);},
                           controller: confirmPasswordController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
@@ -237,24 +314,25 @@ class _RegisterStateState extends State<Register> {
                               // setState(() {
                               //   showProgress = true;
                               // });
-                              _handleSubmit(context);
-
+                              if (_formKey.currentState.validate()) {
+                                _handleSubmit(context);
+                              }
                             },
                           )),
                       Container(
                           child: Row(
-                        children: <Widget>[
-                          Text('Already have an account?'),
-                          FlatButton(
-                              textColor: Colors.white,
-                              child: Text(
-                                'Login Instead',
-                              ),
-                              padding: EdgeInsets.all(30),
-                              onPressed: () => Navigator.pop(context))
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.center,
-                      ))
+                            children: <Widget>[
+                              Text('Already have an account?'),
+                              FlatButton(
+                                  textColor: Colors.white,
+                                  child: Text(
+                                    'Login Instead',
+                                  ),
+                                  padding: EdgeInsets.all(30),
+                                  onPressed: () => Navigator.pop(context))
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          ))
                     ],
                   )))),
     );
