@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:service_exchange_multi/homepage/MainActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
+import 'package:service_exchange_multi/utils/Dialoge.dart';
 
 import 'Register.dart';
 
@@ -16,23 +17,23 @@ class _LoginState extends State<LoginActivity> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
 
   var firebaseAuth = FirebaseAuth.instance;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
 
-    if(FirebaseAuth.instance.currentUser.uid != null)
-      {
+    try {
+      if ( FirebaseAuth.instance.currentUser != null) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    MainActivity()),
+            MaterialPageRoute(builder: (context) => MainActivity()),
             ModalRoute.withName("/Home"));
       }
+    } catch (Exception) {}
   }
 
   /// Show alert dialog
@@ -61,6 +62,46 @@ class _LoginState extends State<LoginActivity> {
         return alert;
       },
     );
+  }
+
+  /// Handle user Registration
+  Future<void> _handleSubmit(BuildContext context) async {
+    try {
+      Dialoge.showLoadingDialog(context, _keyLoader); //invoking login
+
+
+      try {
+        UserCredential userCredential =
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+            email: emailController.text
+                .replaceAll(" ", ""),
+            password: passwordController
+                .text
+                .replaceAll(" ", ""));
+
+        if (userCredential.user.uid != null) {
+
+          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      MainActivity()),
+              ModalRoute.withName("/Home"));
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          showAlertDialog(context,
+              "No user found with this email, please check your email and try again");
+        } else if (e.code == 'wrong-password') {
+          showAlertDialog(context,
+              "Password is wrong, Please check and enter password again");
+        }
+      }
+
+    } catch (Exception) {}
   }
 
   String validateText(String text, bool isEmail, bool isPassword) {
@@ -174,35 +215,8 @@ class _LoginState extends State<LoginActivity> {
                               child: Text('Login'),
                               onPressed: () async {
                                 if (_formKey.currentState.validate()) {
-                                  try {
-                                    UserCredential userCredential =
-                                        await FirebaseAuth.instance
-                                            .signInWithEmailAndPassword(
-                                                email: emailController.text
-                                                    .replaceAll(" ", ""),
-                                                password: passwordController
-                                                    .text
-                                                    .replaceAll(" ", ""));
-
-                                    if (userCredential.user.uid != null) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MainActivity()),
-                                          ModalRoute.withName("/Home"));
-                                    }
-                                  } on FirebaseAuthException catch (e) {
-                                    if (e.code == 'user-not-found') {
-                                      showAlertDialog(context,
-                                          "No user found with this email, please check your email and try again");
-                                    } else if (e.code == 'wrong-password') {
-                                      showAlertDialog(context,
-                                          "Password is wrong, Please check and enter password again");
-                                    }
-                                  }
+                                  _handleSubmit(context);
                                 }
-
                               },
                             )),
                         Container(

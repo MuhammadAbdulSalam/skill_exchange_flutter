@@ -9,8 +9,9 @@ class Constants{
   static const BLUE_SHADE_2 = Color(0xFF88F0F2);
 
   static const DEFAULT_ORANGE = Color(0xFFd25643);
-  static const ORANGE_SHADE_1 = Color(0xE65E49);
-  static const ORANGE_SHADE_2 = Color(0xF2634E);
+  static const ORANGE_SHADE_1 = Color(0xFFE65E49);
+  static const ORANGE_SHADE_2 = Color(0xFF2634E);
+  static const DARK_GREY = Color(0xFF2b2b2b);
 
 
   static const USER_NAME = "user_name";
