@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location.</string>
+	<string>This app needs access to ui.location.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location.</string>
+	<string>This app needs access to ui.location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location.</string>
+	<string>This app needs access to ui.location.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>location</string>
+		<string>ui.location</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

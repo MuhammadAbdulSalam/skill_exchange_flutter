@@ -4,9 +4,9 @@ import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:service_exchange_multi/ui/loginviews/LoginActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 
-import 'loginviews/LoginActivity.dart';
 import 'package:flutter/animation.dart';
 
 

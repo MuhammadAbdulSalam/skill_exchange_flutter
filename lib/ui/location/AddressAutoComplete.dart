@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:service_exchange_multi/loginviews/Register.dart';
+import 'package:service_exchange_multi/ui/loginviews/Register.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;

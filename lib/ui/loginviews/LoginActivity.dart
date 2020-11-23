@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:service_exchange_multi/homepage/MainActivity.dart';
+import 'package:service_exchange_multi/ui/homepage/LandingActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/Dialoge.dart';
 
@@ -30,7 +30,7 @@ class _LoginState extends State<LoginActivity> {
       if ( FirebaseAuth.instance.currentUser != null) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => MainActivity()),
+            MaterialPageRoute(builder: (context) => LandingActivity()),
             ModalRoute.withName("/Home"));
       }
     } catch (Exception) {}
@@ -88,7 +88,7 @@ class _LoginState extends State<LoginActivity> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      MainActivity()),
+                      LandingActivity()),
               ModalRoute.withName("/Home"));
         }
       } on FirebaseAuthException catch (e) {

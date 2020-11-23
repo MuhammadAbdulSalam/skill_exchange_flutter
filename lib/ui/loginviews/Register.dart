@@ -3,11 +3,12 @@ import 'dart:collection';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:service_exchange_multi/location/AddressAutoComplete.dart';
-import 'package:service_exchange_multi/loginviews/LoginActivity.dart';
+import 'package:service_exchange_multi/ui/location/AddressAutoComplete.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/Dialoge.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'LoginActivity.dart';
 
 class Register extends StatefulWidget {
   String name, email, password, phoneNumber, jobTitle;
