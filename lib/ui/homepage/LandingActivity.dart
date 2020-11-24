@@ -25,6 +25,7 @@ final icons = [
   Icons.clear,
   Icons.my_location,
   Icons.auto_fix_high,
+
 ];
 
 class LandingActivity extends StatefulWidget {
@@ -73,7 +74,7 @@ class _LandingActivity extends State<LandingActivity> {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
-                  expandedHeight: 100.0,
+                  expandedHeight: 70.0,
                   floating: true,
                   pinned: false,
                   forceElevated: innerBoxIsScrolled,

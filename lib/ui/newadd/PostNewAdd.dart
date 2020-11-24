@@ -4,6 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:service_exchange_multi/ui/loginviews/LoginActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/Dialoge.dart';
+import 'package:service_exchange_multi/utils/flipbar/src/TemplateDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PostNewAdd extends StatefulWidget {
   @override
@@ -64,7 +66,7 @@ class _PostNewAddState extends State<PostNewAdd>  {
 
   }
 
-  void _topBarFunctions(BuildContext context, int index) {
+  Future<void> _topBarFunctions(BuildContext context, int index) async {
     if (index == TOOLBAR_CLEAR_INDEX) {
       currentLocationController.text = "";
       requestedServiceController.text = "";
@@ -78,8 +80,19 @@ class _PostNewAddState extends State<PostNewAdd>  {
 
     if (index == TOOLBAR_MAGIC_INDEX) {
 
-      print("-----------------<>-------------------------------------");
-      showAlertDialog(context, "Something");
+      final prefs = await SharedPreferences.getInstance();
+      String templateService = await prefs.getString(Constants.TEMPLATE_SERVICE) ?? "";
+      String templateDescription = await prefs.getString(Constants.TEMPLATE_DESCRIPTION) ?? "";
+
+      if(templateDescription == "default" && templateService == "default")
+        {
+          showAlertDialog(context, "You do not have a template stored. Would you like to save a template now? You can then use this tepmlate by pressing the magic wand icon");
+        }
+      else
+        {
+          returnServiceController.text = templateService;
+          returnDescriptionController.text = "   " + templateDescription;
+        }
     }
   }
 
@@ -87,8 +100,19 @@ class _PostNewAddState extends State<PostNewAdd>  {
   /// Show alert dialog
   showAlertDialog(BuildContext context, String text) {
     // set up the button
-    Widget okButton = FlatButton(
-      child: Text("Retry"),
+    Widget yesButton = FlatButton(
+      child: Text("yes"),
+      onPressed: () {
+        Navigator.of(context).pop(true);
+        showDialog(
+          context: context,
+          builder: (_) => TemplateDialog(),
+        );
+      },
+    );
+
+    Widget noButton = FlatButton(
+      child: Text("no"),
       onPressed: () {
         Navigator.of(context).pop(true);
       },
@@ -96,10 +120,11 @@ class _PostNewAddState extends State<PostNewAdd>  {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Error Occurred"),
+      title: Text("No template stored"),
       content: Text(text),
       actions: [
-        okButton,
+        yesButton,
+        noButton
       ],
     );
 
@@ -192,6 +217,8 @@ class _PostNewAddState extends State<PostNewAdd>  {
                           return validateForm(value);
                         },
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.black54,
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Constants.THEME_DEFAULT_BORDER,

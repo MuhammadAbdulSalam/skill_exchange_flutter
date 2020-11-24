@@ -25,6 +25,9 @@ class Constants{
   static const USER_PHONE = "user_phone";
   static const USER_ADDRESS = "user_address";
   static const USER_DP = "user_dp";
+  static const TEMPLATE_SERVICE = "template_service";
+  static const TEMPLATE_DESCRIPTION = "template_description";
+
 
 
   // ignore: non_constant_identifier_names
