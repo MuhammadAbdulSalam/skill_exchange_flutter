@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:service_exchange_multi/ui/homepage/DemoPage.dart';
 import 'package:service_exchange_multi/ui/homepage/LandingActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/Dialoge.dart';
@@ -28,6 +29,7 @@ class _LoginState extends State<LoginActivity> {
 
     try {
       if ( FirebaseAuth.instance.currentUser != null) {
+
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => LandingActivity()),

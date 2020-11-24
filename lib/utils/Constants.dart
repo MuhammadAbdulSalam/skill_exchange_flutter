@@ -2,6 +2,8 @@
 
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 class Constants{
 
   static const DEFAULT_BLUE =  Color(0xFF6dc1c3);
@@ -12,6 +14,10 @@ class Constants{
   static const ORANGE_SHADE_1 = Color(0xFFE65E49);
   static const ORANGE_SHADE_2 = Color(0xFF2634E);
   static const DARK_GREY = Color(0xFF2b2b2b);
+
+  static const THEME_DEFAULT_BACKGROUND = Colors.black87;
+  static const THEME_DEFAULT_BORDER = Colors.white;
+  static const THEME_DEFAULT_TEXT = Colors.white;
 
 
   static const USER_NAME = "user_name";
