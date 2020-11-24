@@ -18,14 +18,11 @@ class App extends StatelessWidget {
   }
 }
 
-
 final icons = [
-  Icons.clear_all,
-  Icons.location_pin,
+  Icons.clear,
+  Icons.my_location,
   Icons.auto_fix_high,
-
 ];
-
 
 class LandingActivity extends StatefulWidget {
   @override
@@ -37,6 +34,7 @@ class LandingActivity extends StatefulWidget {
 class _LandingActivity extends State<LandingActivity> {
   int selectedIndex = 0;
   PageController _pageController;
+  PostNewAdd postNewAdd = new PostNewAdd();
 
   void _changePage(int pageNum) {
     setState(() {
@@ -110,54 +108,8 @@ class _LandingActivity extends State<LandingActivity> {
                 PlaceholderWidget(Colors.black87),
                 PlaceholderWidget(Constants.BLUE_SHADE_2),
                 PlaceholderWidget(Colors.orangeAccent),
-                Container(
-                  color: Colors.black87,
-                  child: ListView(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                width: 2.0,
-                                color: Constants.THEME_DEFAULT_BORDER),
-                          ),
-                        ),
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          children: List.generate(
-                              icons.length,
-                              (index) => Expanded(
-                                    child: GestureDetector(
-                                        onTap: () => print('Tapped:$index'),
-                                        child: Container(
-                                          height: 30,
-                                          color: Colors.transparent,
-                                          child: Icon(
-                                            icons[index],
-                                            color: Colors.white60,
-                                          ),
-                                        )),
-                                  )),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Constants.THEME_DEFAULT_BORDER,
-                                  width: 1.0),
-                            ),
-                            border: OutlineInputBorder(),
-                            labelText: 'Current Location',
-                            labelStyle: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                postNewAdd.build(context),
+
               ],
             )),
         bottomNavigationBar: FlipBoxBar(
