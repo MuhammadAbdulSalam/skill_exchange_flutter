@@ -25,16 +25,6 @@ class _LoginState extends State<LoginActivity> {
   void initState()  {
     super.initState();
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-
-    try {
-      if ( FirebaseAuth.instance.currentUser != null) {
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => LandingActivity()),
-            ModalRoute.withName("/Home"));
-      }
-    } catch (Exception) {}
   }
 
   /// Show alert dialog

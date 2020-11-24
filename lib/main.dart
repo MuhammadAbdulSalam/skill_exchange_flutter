@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:service_exchange_multi/ui/homepage/LandingActivity.dart';
 import 'package:service_exchange_multi/ui/loginviews/LoginActivity.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 
@@ -18,10 +20,6 @@ Future<void> main() async {
   runApp(new MaterialApp(
 
       home: new SplashScreen(),
-
-    routes: <String, WidgetBuilder>{
-      '/LoginActivity': (BuildContext context) => new LoginActivity()
-    },
   ));
 }
 
@@ -40,7 +38,24 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   }
 
   void navigationPage() {
-    Navigator.of(context).pushReplacementNamed('/LoginActivity');
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+
+    try {
+      if ( FirebaseAuth.instance.currentUser != null) {
+
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LandingActivity()),
+            ModalRoute.withName("/Home"));
+      }
+      else{
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginActivity()),
+            ModalRoute.withName("/Home"));
+      }
+    } catch (Exception) {}
+
   }
 
 

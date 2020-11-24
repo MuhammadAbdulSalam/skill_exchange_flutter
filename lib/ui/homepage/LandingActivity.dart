@@ -51,10 +51,6 @@ class _LandingActivity extends State<LandingActivity> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
-
-
     super.initState();
     _pageController = PageController();
   }
