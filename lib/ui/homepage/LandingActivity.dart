@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:service_exchange_multi/ui/homepage/PostsHomePage.dart';
 import 'package:service_exchange_multi/ui/newadd/PostNewAdd.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/CustomPagerPhysics.dart';
 import 'package:service_exchange_multi/utils/flipbar/src/flip_bar_item.dart';
 import 'package:service_exchange_multi/utils/flipbar/src/flip_box_bar.dart';
+import 'package:service_exchange_multi/utils/Dialoge.dart';
+
 
 void main() => runApp(App());
 
@@ -34,7 +37,6 @@ class LandingActivity extends StatefulWidget {
 class _LandingActivity extends State<LandingActivity> {
   int selectedIndex = 0;
   PageController _pageController;
-  PostNewAdd postNewAdd = new PostNewAdd();
 
   void _changePage(int pageNum) {
     setState(() {
@@ -50,6 +52,9 @@ class _LandingActivity extends State<LandingActivity> {
   @override
   void initState() {
     // TODO: implement initState
+
+
+
     super.initState();
     _pageController = PageController();
   }
@@ -63,6 +68,7 @@ class _LandingActivity extends State<LandingActivity> {
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: Scaffold(
@@ -107,8 +113,8 @@ class _LandingActivity extends State<LandingActivity> {
               children: [
                 PlaceholderWidget(Colors.black87),
                 PlaceholderWidget(Constants.BLUE_SHADE_2),
-                PlaceholderWidget(Colors.orangeAccent),
-                postNewAdd.build(context),
+                PostsHomePage(),
+                PostNewAdd(),
 
               ],
             )),
