@@ -18,6 +18,9 @@ class Constants{
   static const THEME_DEFAULT_BACKGROUND = Colors.black87;
   static const THEME_DEFAULT_BORDER = Colors.white;
   static const THEME_DEFAULT_TEXT = Colors.white;
+  static const THEME_TEXT_BOX_COLOR = Colors.black54;
+
+
 
 
   static const USER_NAME = "user_name";
