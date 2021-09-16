@@ -3,11 +3,12 @@ import 'dart:collection';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:service_exchange_multi/location/AddressAutoComplete.dart';
-import 'package:service_exchange_multi/loginviews/LoginActivity.dart';
+import 'package:service_exchange_multi/ui/location/AddressAutoComplete.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:service_exchange_multi/utils/Dialoge.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'LoginActivity.dart';
 
 class Register extends StatefulWidget {
   String name, email, password, phoneNumber, jobTitle;
@@ -127,15 +128,16 @@ class _RegisterStateState extends State<Register> {
       );
     }
 
-
     /// Handle user Registration
     Future<void> _handleSubmit(BuildContext context) async {
       try {
         Dialoge.showLoadingDialog(context, _keyLoader); //invoking login
 
         try {
-          String emailToRegister = emailController.text.toString();
-          String passwordToRegister = passwordController.text.toString();
+          String emailToRegister =
+              emailController.text.toString().replaceAll(" ", "");
+          String passwordToRegister =
+              passwordController.text.toString().replaceAll(" ", "");
           final newuser = await _auth.createUserWithEmailAndPassword(
               email: emailToRegister, password: passwordToRegister);
 
@@ -156,11 +158,18 @@ class _RegisterStateState extends State<Register> {
             final prefs = await SharedPreferences.getInstance();
 
             await DBRef.child(uid).set(usersHashMap).then((result) {
-              prefs.setString(Constants.USER_NAME, nameController.text.toString());
-              prefs.setString(Constants.USER_JOB, jobTitleController.text,);
-              prefs.setString(Constants.USER_PHONE, phoneController.text);
+              prefs.setString(
+                  Constants.USER_NAME, nameController.text.toString());
+              prefs.setString(
+                Constants.USER_JOB,
+                jobTitleController.text,
+              );
+              prefs.setString(Constants.USER_PHONE,
+                  phoneController.text.replaceAll(" ", ""));
               prefs.setString(Constants.USER_ADDRESS, addressController.text);
               prefs.setString(Constants.USER_DP, "default");
+
+              FirebaseAuth.instance.signOut();
 
               Navigator.of(_keyLoader.currentContext, rootNavigator: true)
                   .pop();
@@ -203,7 +212,7 @@ class _RegisterStateState extends State<Register> {
             r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
         RegExp regExp = new RegExp(pattern);
         if (!regExp.hasMatch(text)) {
-          return "Password must contain \n One Uppercase \n One Number \n One Special Character";
+          return "Password must contain \n * Atleast One Uppercase \n * Atleast One Number \n * Atleast One Special Character";
         }
       }
 
@@ -225,7 +234,7 @@ class _RegisterStateState extends State<Register> {
                         Constants.DEFAULT_ORANGE
                       ])),
                   child: ListView(
-                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.all(10),
@@ -336,9 +345,6 @@ class _RegisterStateState extends State<Register> {
                             color: Constants.DEFAULT_BLUE,
                             child: Text('Register'),
                             onPressed: () async {
-                              // setState(() {
-                              //   showProgress = true;
-                              // });
                               if (_formKey.currentState.validate()) {
                                 _handleSubmit(context);
                               }
@@ -354,7 +360,10 @@ class _RegisterStateState extends State<Register> {
                                 'Login Instead',
                               ),
                               padding: EdgeInsets.all(30),
-                              onPressed: () => Navigator.pop(context))
+                              onPressed: () =>  Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => LoginActivity())),
+
+                              )
                         ],
                         mainAxisAlignment: MainAxisAlignment.center,
                       ))

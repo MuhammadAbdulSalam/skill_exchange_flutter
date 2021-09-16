@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:service_exchange_multi/loginviews/Register.dart';
+import 'package:service_exchange_multi/ui/loginviews/Register.dart';
 import 'package:service_exchange_multi/utils/Constants.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
@@ -118,6 +118,7 @@ class _AddressAutoCompleteState extends State<AddressAutoComplete> {
                     });
                   }
                 },
+              style: TextStyle(fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   icon: Container(
                     width: 10,
@@ -127,8 +128,9 @@ class _AddressAutoCompleteState extends State<AddressAutoComplete> {
                       color: Colors.black,
                     ),
                   ),
-                  hintText: "Enter your shipping address",
+                  hintText: "Tap Here to search for address",
                   border: InputBorder.none,
+
                   contentPadding: EdgeInsets.only(left: 8.0, top: 16.0),
                 ),
               ),

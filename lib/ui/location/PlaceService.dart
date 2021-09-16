@@ -82,7 +82,6 @@ class PlaceApiProvider {
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      print("::::::::::::::::::::::::::::::::::::::::::" + response.body.toString());
 
       if (result['status'] == 'OK') {
         final components =
